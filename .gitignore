@@ -1,3 +1,27 @@
-/for-context
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+env/
 .env
 .env.local
+
+/for-context
+gemini-conversation-1772737357223.json
+
+# Data
+backend/data/raw/*.csv
+backend/data/charts/*.png
+
+# Node / Frontend (If any leaks to root)
+node_modules/
+.next/
+out/
+build/
+
+# Project Specific
+ques-ans.md
+.gemini_security/

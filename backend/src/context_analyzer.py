@@ -11,15 +11,28 @@ def analyze_context(df: pd.DataFrame, ticker: str):
     
     # 1. Market Correlation (SPY)
     start_date = df.index.min().strftime('%Y-%m-%d')
-    end_date = df.index.max().strftime('%Y-%m-%d')
+    end_date = (df.index.max() + timedelta(days=1)).strftime('%Y-%m-%d')
     spy_data = yf.download("SPY", start=start_date, end=end_date, progress=False)
     
     if not spy_data.empty:
+        # Handle MultiIndex if present
+        if isinstance(spy_data.columns, pd.MultiIndex):
+            spy_close = spy_data['Close']['SPY']
+        else:
+            spy_close = spy_data['Close']
+            
         if df.index.tz is not None: df.index = df.index.tz_localize(None)
-        if spy_data.index.tz is not None: spy_data.index = spy_data.index.tz_localize(None)
-        spy_returns = spy_data['Close'].pct_change().fillna(0).reindex(df.index, method='pad')
+        if spy_close.index.tz is not None: spy_close.index = spy_close.index.tz_localize(None)
+        
+        spy_returns = spy_close.pct_change().fillna(0).reindex(df.index, method='pad').fillna(0)
         diff = abs(df['price_change'] - spy_returns.values.flatten())
-        df['market_diff_score'] = (diff - diff.min()) / (diff.max() - diff.min())
+        
+        diff_max = diff.max()
+        diff_min = diff.min()
+        if diff_max != diff_min:
+            df['market_diff_score'] = (diff - diff_min) / (diff_max - diff_min)
+        else:
+            df['market_diff_score'] = 0.0
     else:
         df['market_diff_score'] = 0.5
 
@@ -27,10 +40,22 @@ def analyze_context(df: pd.DataFrame, ticker: str):
     news = stock.news
     df['has_news'] = False
     for article in news:
-        # Convert pubtime to date string
-        pub_date = datetime.fromtimestamp(article['providerPublishTime']).strftime('%Y-%m-%d')
-        if pub_date in df.index.strftime('%Y-%m-%d'):
-            df.loc[df.index.strftime('%Y-%m-%d') == pub_date, 'has_news'] = True
+        try:
+            # Handle new yfinance news format
+            if 'content' in article and 'pubDate' in article['content']:
+                pub_time_str = article['content']['pubDate']
+                # Usually '2026-03-04T21:56:56Z'
+                pub_date = pub_time_str.split('T')[0]
+            elif 'providerPublishTime' in article:
+                pub_date = datetime.fromtimestamp(article['providerPublishTime']).strftime('%Y-%m-%d')
+            else:
+                continue
+                
+            if pub_date in df.index.strftime('%Y-%m-%d'):
+                df.loc[df.index.strftime('%Y-%m-%d') == pub_date, 'has_news'] = True
+        except Exception as e:
+            print(f"Error parsing news article: {e}")
+            continue
 
     # 3. Earnings Check
     try:

@@ -20,8 +20,8 @@ def calculate_features(df: pd.DataFrame):
     df['ma_7'] = df['close'].rolling(window=7).mean()
     df['ma_21'] = df['close'].rolling(window=21).mean()
     
-    # Relative Volume (Volume vs 14-day average)
-    df['rel_volume'] = df['volume'] / df['volume'].rolling(window=14).mean()
+    # Relative Volume (Volume vs 30-day average)
+    df['rel_volume'] = df['volume'] / df['volume'].rolling(window=30).mean()
     
     # Handle NaN values from rolling calculations
     df = df.dropna()

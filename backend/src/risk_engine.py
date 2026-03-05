@@ -12,7 +12,7 @@ def calculate_risk(df: pd.DataFrame):
     
     return df
 
-def generate_reasons(row):
+def generate_reasons(row, avg_volatility=0.0):
     """
     Generates human-readable reasons for high risk.
     """
@@ -34,7 +34,7 @@ def generate_reasons(row):
     if row['market_diff_score'] > 0.8:
         reasons.append("Movement decoupled from broader market (SPY) trends")
 
-    if row['volatility'] > row['volatility'].mean() * 1.5:
+    if row['volatility'] > avg_volatility * 1.5:
         reasons.append("Abnormal volatility detected")
     
     return " | ".join(reasons) if reasons else "Normal market activity."

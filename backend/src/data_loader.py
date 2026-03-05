@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 import os
 
-def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d"):
+def fetch_stock_data(ticker: str, period: str = "3y", interval: str = "1d"):
     """
     Fetches historical stock data for a given ticker.
     :param ticker: Stock ticker symbol (e.g., 'AAPL')

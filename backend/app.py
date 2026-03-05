@@ -36,9 +36,17 @@ async def analyze_stock(ticker: str):
         last_30['date'] = last_30.index.strftime('%Y-%m-%d')
         
         # Find suspicious events (risk > 70%)
-        suspicious_events = df[df['manipulation_risk'] > 70].tail(10).copy()
-        suspicious_events['date'] = suspicious_events.index.strftime('%Y-%m-%d')
-        suspicious_events['reason'] = suspicious_events.apply(generate_reasons, axis=1)
+        suspicious_events = df[df['manipulation_risk'] > 70].copy()
+        avg_volatility = df['volatility'].mean()
+        
+        if not suspicious_events.empty:
+            # Sort by date descending to show most recent first
+            suspicious_events = suspicious_events.sort_index(ascending=False).head(10)
+            suspicious_events['date'] = suspicious_events.index.strftime('%Y-%m-%d')
+            suspicious_events['reason'] = suspicious_events.apply(generate_reasons, axis=1, args=(avg_volatility,))
+            suspicious_list = suspicious_events[['date', 'manipulation_risk', 'reason']].to_dict(orient='records')
+        else:
+            suspicious_list = []
         
         # Summary statistics
         latest_risk = df['manipulation_risk'].iloc[-1]
@@ -49,10 +57,10 @@ async def analyze_stock(ticker: str):
             "summary": {
                 "price": float(df['close'].iloc[-1]),
                 "volume": int(df['volume'].iloc[-1]),
-                "avg_volatility": float(df['volatility'].mean())
+                "avg_volatility": float(avg_volatility)
             },
-            "history": last_30[['date', 'close', 'volume', 'manipulation_risk']].to_dict(orient='records'),
-            "suspicious_events": suspicious_events[['date', 'manipulation_risk', 'reason']].to_dict(orient='records')
+            "history": last_30[['date', 'close', 'volume', 'rel_volume', 'manipulation_risk']].to_dict(orient='records'),
+            "suspicious_events": suspicious_list
         }
         
     except Exception as e:
