@@ -1,3 +1,6 @@
+fastapi
+uvicorn
+python-multipart
 pandas
 numpy
 scikit-learn
@@ -5,6 +8,5 @@ matplotlib
 yfinance
 requests
 seaborn
-fastapi
-uvicorn
-python-multipart
+google-generativeai
+python-dotenv

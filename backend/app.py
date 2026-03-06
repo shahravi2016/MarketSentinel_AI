@@ -5,6 +5,7 @@ from src.feature_engineering import calculate_features
 from src.anomaly_detector import detect_anomalies
 from src.context_analyzer import analyze_context
 from src.risk_engine import calculate_risk, generate_reasons
+from src.ai_investigator import generate_investigation_report
 import pandas as pd
 import json
 
@@ -35,6 +36,20 @@ async def analyze_stock(ticker: str):
         last_30 = df.tail(30).copy()
         last_30['date'] = last_30.index.strftime('%Y-%m-%d')
         
+        # Ensure all columns needed for graphs are numeric and cleaned
+        history_list = []
+        for date_idx, row in last_30.iterrows():
+            item = {
+                "date": date_idx.strftime('%Y-%m-%d'),
+                "close": float(row['close']),
+                "volume": float(row['volume']),
+                "volatility": float(row['volatility'] * 100), # send as percentage
+                "rel_volume": float(row['rel_volume']),
+                "manipulation_risk": float(row['manipulation_risk']),
+                "price_change": float(row['price_change'] * 100) # percentage
+            }
+            history_list.append(item)
+        
         # Find suspicious events (risk > 70%)
         suspicious_events = df[df['manipulation_risk'] > 70].copy()
         avg_volatility = df['volatility'].mean()
@@ -43,8 +58,14 @@ async def analyze_stock(ticker: str):
             # Sort by date descending to show most recent first
             suspicious_events = suspicious_events.sort_index(ascending=False).head(10)
             suspicious_events['date'] = suspicious_events.index.strftime('%Y-%m-%d')
-            suspicious_events['reason'] = suspicious_events.apply(generate_reasons, axis=1, args=(avg_volatility,))
-            suspicious_list = suspicious_events[['date', 'manipulation_risk', 'reason']].to_dict(orient='records')
+            
+            # For Investigation Mode, we'll return the full row data too
+            suspicious_list = []
+            for date_idx, row in suspicious_events.iterrows():
+                event = row.to_dict()
+                event['date'] = date_idx.strftime('%Y-%m-%d')
+                event['reason'] = generate_reasons(row)
+                suspicious_list.append(event)
         else:
             suspicious_list = []
         
@@ -59,10 +80,29 @@ async def analyze_stock(ticker: str):
                 "volume": int(df['volume'].iloc[-1]),
                 "avg_volatility": float(avg_volatility)
             },
-            "history": last_30[['date', 'close', 'volume', 'rel_volume', 'manipulation_risk']].to_dict(orient='records'),
+            "history": history_list,
             "suspicious_events": suspicious_list
         }
         
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/investigate/{ticker}")
+async def investigate_event(ticker: str, payload: dict):
+    """
+    Triggers Gemini AI Investigation for a specific date/data point.
+    """
+    try:
+        date = payload.get("date")
+        row_data = payload.get("data")
+        
+        if not date or not row_data:
+            raise HTTPException(status_code=400, detail="Date and row data required")
+            
+        report = generate_investigation_report(ticker, date, row_data)
+        return {"report": report}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

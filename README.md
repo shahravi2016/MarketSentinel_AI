@@ -1,57 +1,68 @@
 # MarketSentinel AI 🛡️📈
 
-MarketSentinel AI is an intelligent system designed to detect potential stock market manipulation by analyzing price behavior, trading volume, and contextual market signals (News & Earnings).
-
-Unlike traditional anomaly detection, MarketSentinel AI evaluates whether unusual price movements are **justified** by real-world events.
+**MarketSentinel AI** is a state-of-the-art, context-aware surveillance system designed to identify and investigate potential stock market manipulation. By synthesizing statistical anomaly detection with real-world contextual reasoning, the platform provides transparency into "unjustified" market behavior.
 
 ---
 
 ## 🚀 Key Features
 
-- **AI Anomaly Detection**: Uses the **Isolation Forest** machine learning model to detect abnormal price and volume spikes.
-- **Contextual Intelligence**: Cross-references market anomalies with live **News** and **Earnings** data via `yfinance`.
-- **Market Correlation Analysis**: Compares stock movements against the S&P 500 (SPY) to identify decoupling.
-- **Manipulation Risk Scoring**: Generates a 0-100% risk score with human-readable reasoning.
-- **Modern Dashboard**: High-performance Next.js frontend with real-time charting using Recharts.
+- **Multi-Layered Anomaly Detection**: Employs the **Isolation Forest** machine learning algorithm to identify multi-dimensional outliers across price, volume, and volatility.
+- **Contextual Intelligence Engine**: Automatically cross-references statistical anomalies with live **News Signals**, **Earnings Calendars**, and **Sector Correlations** to determine if a move is fundamentally justified.
+- **LLM-Powered Forensic Audits**: Integrated with **Google Gemini AI** to generate deep-dive narrative reports on specific "Shock Events," providing human-readable investigations into complex market signatures.
+- **Dynamic Risk Scoring**: Quantifies the probability of manipulation on a 0-100% scale, updated in real-time based on the latest surveillance data.
+- **Immersive Surveillance Dashboard**: A high-fidelity Next.js interface featuring 3D particle backgrounds, animated search nodes, and high-density data visualizations.
+
+---
+
+## 📈 How It Works (Surveillance Pipeline)
+
+1.  **Data Ingestion**: The system pulls high-resolution historical and real-time OHLCV data via the `yfinance` API.
+2.  **Neural Feature Engineering**: We calculate advanced technical features, including rolling standard deviation (volatility), relative volume (accumulation ratio), and sector-relative price deltas.
+3.  **Statistical Outlier Analysis**: The backend passes these features through an **Isolation Forest** model, which assigns an "anomaly score" to every data point.
+4.  **Contextual Synthesis**: For every flagged anomaly, the AI interrogates external signals:
+    *   *News Verification*: Was there a relevant press release or SEC filing?
+    *   *Earnings Sync*: Is the move synchronized with a scheduled financial report?
+    *   *Market Decoupling*: Did the stock move independently of the S&P 500 (SPY)?
+5.  **Forensic Reporting**: Users can trigger a **Gemini AI Audit** on any suspicious event. The AI analyzes the raw data signature and contextual news to produce a professional forensic report.
+
+---
+
+## 📊 Analytics & Visualizations
+
+MarketSentinel AI utilizes a suite of professional charts to provide a comprehensive view of asset integrity:
+
+### 1. Neural Frequency Analysis (Signal vs. Shock Pulse)
+This primary chart overlays the **Asset Price Index** with **Shock Pulses** (high-risk moments).
+*   **Why it makes sense**: It allows analysts to immediately see the correlation between price action and manipulation risk. A price surge accompanied by a "Shock Pulse" indicates a move that is statistically abnormal and contextually unsupported.
+
+### 2. Risk Probability Trend (Probabilistic Forecast)
+A dedicated area chart visualizing the **Manipulation Risk Score** (0–100%) over time.
+*   **Why it makes sense**: It provides a standalone "Heat Check" for the asset. Sustained high risk levels indicate a period of instability or coordinated accumulation/distribution that requires investigation.
+
+### 3. Volume Intensity Distribution (Accumulation Analytics)
+A bar chart representing trading volume, dynamically colored based on risk intensity.
+*   **Why it makes sense**: High-volume "Shock Bars" (pink) highlight periods of intense market activity that the AI has flagged as anomalous. This is critical for identifying "Wash Trading" or "Pump and Dump" footprints.
+
+### 4. Volumetric Stress Heatmap (Variance Clustering)
+Visualizes **Price Variance (Volatility)** as a purple pulse graph.
+*   **Why it makes sense**: Market stress often precedes or accompanies manipulation. By mapping variance clusters, analysts can identify periods of "Neural Stress" where the asset is behaving chaotically compared to its historical norm.
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Backend (AI & API)
-- **Python 3.11+**
-- **FastAPI**: High-performance web framework.
-- **Scikit-learn**: Isolation Forest for anomaly detection.
-- **Pandas/Numpy**: Data processing and feature engineering.
-- **yfinance**: Real-time market data, news, and earnings fetching.
+### Backend (AI & Intelligence)
+- **Python 3.11+** | **FastAPI**
+- **Scikit-learn**: Isolation Forest Algorithm.
+- **Pandas & NumPy**: High-performance data manipulation.
+- **Google Gemini API**: Forensic narrative generation.
 
-### Frontend (Dashboard)
-- **Next.js 15 (App Router)**
-- **Tailwind CSS**: Modern styling.
-- **Recharts**: Data visualization.
-- **Lucide React**: Iconography.
-- **TypeScript**: Type safety.
-
----
-
-## 📂 Project Structure
-
-```text
-MarketSentinel_AI/
-├── backend/
-│   ├── src/                    # AI logic modules
-│   │   ├── data_loader.py      # Fetches stock data
-│   │   ├── feature_engineering.py # Technical indicators
-│   │   ├── anomaly_detector.py # Isolation Forest Model
-│   │   ├── context_analyzer.py # News/Earnings analysis
-│   │   └── risk_engine.py      # Final risk calculation
-│   ├── app.py                  # FastAPI server
-│   └── requirements.txt        # Python dependencies
-├── frontend/
-│   ├── src/app/                # Next.js pages
-│   └── tailwind.config.ts      # UI configuration
-└── README.md
-```
+### Frontend (Command & Control)
+- **Next.js 15 (App Router)** | **TypeScript**
+- **Tailwind CSS**: Professional dark-mode surveillance aesthetic.
+- **Recharts**: High-density data plotting.
+- **Framer Motion**: Smooth interface transitions and animations.
+- **Three.js (React Three Fiber)**: Immersive 3D background environments.
 
 ---
 
@@ -60,38 +71,19 @@ MarketSentinel_AI/
 ### 1. Backend Setup
 ```bash
 cd backend
-# Install dependencies
 pip install -r requirements.txt
-# Start the FastAPI server
+# Ensure you have your GOOGLE_API_KEY set in your environment
 python app.py
 ```
-The backend will run at `http://localhost:8000`.
 
 ### 2. Frontend Setup
 ```bash
 cd frontend
-# Install dependencies
 npm install
-# Start the development server
 npm run dev
 ```
-The dashboard will be available at `http://localhost:3000`.
-
----
-
-## 📈 How it Works (The AI Pipeline)
-
-1. **Data Fetching**: Pulls historical OHLCV data for any ticker.
-2. **Feature Engineering**: Calculates price change, volume relative to average, and volatility.
-3. **Machine Learning**: The Isolation Forest model flags data points that deviate significantly from "normal" trading patterns.
-4. **Contextual Validation**: The AI checks:
-   - *"Is there news today?"*
-   - *"Is it an earnings day?"*
-   - *"Is the whole market moving, or just this stock?"*
-5. **Risk Scoring**: If a spike happens with **No News** and **No Earnings** while the market is flat, the **Manipulation Risk** increases.
-6. **Explanation**: The system provides clear reasons like *"Price surged 40% | NO major news detected to justify this move."*
 
 ---
 
 ## 🛡️ Disclaimer
-MarketSentinel AI is an analysis and research tool. It does not provide financial advice or execute trades.
+MarketSentinel AI is a research and surveillance tool for identifying statistical patterns. It does not constitute financial advice and is intended for educational and analytical purposes only.
